@@ -2,16 +2,18 @@ package com.ricdev.curso.entities;
 
 import java.io.Serializable;
 import java.time.Instant;
+import java.util.HashSet;
 import java.util.Objects;
-
+import java.util.Set;
 import com.fasterxml.jackson.annotation.JsonFormat;
-
+import com.ricdev.curso.entities.enums.OrderStatus;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 
 @Entity
@@ -26,19 +28,26 @@ public class Order implements Serializable {
 	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd 'T' HH:mm:ss 'Z'", timezone = "GMT")
 	private Instant moment;
 	
+	private OrderStatus orderStatus;
+	
 	@ManyToOne
 	@JoinColumn(name = "client_id")
 	private User client;
 	
+
+	@OneToMany(mappedBy = "id.order")
+	private Set<OrderItem> items = new HashSet<>();
 	public Order( ) {
 		
 	}
 
-	public Order(Long id, Instant moment, User client) {
+	public Order(Long id, Instant moment, OrderStatus orderStatus, User client) {
 		super();
 		this.id = id;
 		this.moment = moment;
+		this.orderStatus = orderStatus;
 		this.client = client;
+		
 	}
 
 	public Long getId() {
@@ -57,6 +66,14 @@ public class Order implements Serializable {
 		this.moment = moment;
 	}
 
+	public OrderStatus getOrderStatus() {
+		return orderStatus;
+	}
+
+	public void setOrderStatus(OrderStatus orderStatus) {
+		this.orderStatus = orderStatus;
+	}
+
 	public User getClient() {
 		return client;
 	}
@@ -65,6 +82,14 @@ public class Order implements Serializable {
 		this.client = client;
 	}
 
+	public static long getSerialversionuid() {
+		return serialVersionUID;
+	}
+
+	public Set<OrderItem> getItems(){
+		return items;
+	}
+	
 	@Override
 	public int hashCode() {
 		return Objects.hash(id);
@@ -82,6 +107,7 @@ public class Order implements Serializable {
 		return Objects.equals(id, other.id);
 	}
 	
-	
-
 }
+	
+	
+	
